@@ -1,12 +1,12 @@
 # Richtlinnen fir d'Definéiere vun data-testid's an React Uwendungen
 
-* [EN](/#README.md)
-* [ES](/#README-ES.md)
-* [FR](/#README-FR.md)
-* [JP](/#README-JP.md)
-* [LU](/#README-LG.md)
-* [PT-BR](/#README-PTBR.md)
-* [RU](/#README-RU.md)
+* [EN](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README.md)
+* [ES](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-ES.md)
+* [FR](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-FR.md)
+* [JP](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-JP.md)
+* [LU](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-LG.md)
+* [PT-BR](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-PTBR.md)
+* [RU](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-RU.md)
 
 Et ass essentiel fir virstellbar, eenzegaarteg, an zouverlässeg `data-testid` Attributer ze kreéieren fir robust an ënnerhalbar Tester ze garantéieren. Dës Richtlinn bitt bescht Praktiken, Beispiller, a gemeinsam Musteren fir `data-testid` Attributer an ären React (oder basically all) Uwendungen ze definéieren.
 

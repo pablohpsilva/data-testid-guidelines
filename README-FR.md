@@ -1,12 +1,12 @@
 # Directives pour Définir les data-testid dans les Applications React
 
-* [EN](/#README.md)
-* [ES](/#README-ES.md)
-* [FR](/#README-FR.md)
-* [JP](/#README-JP.md)
-* [LU](/#README-LG.md)
-* [PT-BR](/#README-PTBR.md)
-* [RU](/#README-RU.md)
+* [EN](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README.md)
+* [ES](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-ES.md)
+* [FR](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-FR.md)
+* [JP](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-JP.md)
+* [LU](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-LG.md)
+* [PT-BR](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-PTBR.md)
+* [RU](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-RU.md)
 
 Créer des attributs `data-testid` prévisibles, uniques et fiables est essentiel pour garantir des tests robustes et maintenables. Ce guide fournit des meilleures pratiques, des exemples et des modèles courants pour définir des attributs `data-testid` dans vos applications React (ou toute autre application).
 

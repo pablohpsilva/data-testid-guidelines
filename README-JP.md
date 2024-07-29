@@ -1,12 +1,12 @@
 # React アプリケーションにおける data-testid 定義のガイドライン
 
-* [EN](/#README.md)
-* [ES](/#README-ES.md)
-* [FR](/#README-FR.md)
-* [JP](/#README-JP.md)
-* [LU](/#README-LG.md)
-* [PT-BR](/#README-PTBR.md)
-* [RU](/#README-RU.md)
+* [EN](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README.md)
+* [ES](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-ES.md)
+* [FR](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-FR.md)
+* [JP](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-JP.md)
+* [LU](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-LG.md)
+* [PT-BR](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-PTBR.md)
+* [RU](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-RU.md)
 
 予測可能で、ユニークで、信頼性の高い `data-testid` 属性を作成することは、堅牢で保守可能なテストを確保するために不可欠です。このガイドでは、React（または基本的にどの）アプリケーションにおける `data-testid` 属性の定義に関するベストプラクティス、例、および一般的なパターンを提供します。
 

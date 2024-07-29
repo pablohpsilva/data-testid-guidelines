@@ -1,12 +1,12 @@
 # Руководство по определению data-testid в React приложениях
 
-* [EN](/#README.md)
-* [ES](/#README-ES.md)
-* [FR](/#README-FR.md)
-* [JP](/#README-JP.md)
-* [LU](/#README-LG.md)
-* [PT-BR](/#README-PTBR.md)
-* [RU](/#README-RU.md)
+* [EN](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README.md)
+* [ES](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-ES.md)
+* [FR](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-FR.md)
+* [JP](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-JP.md)
+* [LU](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-LG.md)
+* [PT-BR](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-PTBR.md)
+* [RU](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-RU.md)
 
 Создание предсказуемых, уникальных и надежных атрибутов `data-testid` необходимо для обеспечения устойчивых и поддерживаемых тестов. Это руководство предоставляет лучшие практики, примеры и общие шаблоны для определения атрибутов `data-testid` в ваших приложениях на React (или в любых других).
 
