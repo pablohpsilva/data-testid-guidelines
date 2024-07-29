@@ -1,5 +1,13 @@
 # Guidelines for Defining data-testid's in React Applications
 
+* [EN](/#README.md)
+* [ES](/#README-ES.md)
+* [FR](/#README-FR.md)
+* [JP](/#README-JP.md)
+* [LU](/#README-LG.md)
+* [PT-BR](/#README-PTBR.md)
+* [RU](/#README-RU.md)
+
 Creating predictable, unique, and reliable `data-testid` attributes is essential for ensuring robust and maintainable tests. This guide provides best practices, examples, and common patterns for defining `data-testid` attributes in your React (or basically any) applications.
 
 ## Why Use data-testid's?
@@ -138,6 +146,8 @@ In the example above, you can clearly see all the possible data-testids and how 
 ```
 
 Here's the list of generated data-testid's:
+
+<img src="images/rendered.png" alt="rendered components with data-testids being displayed">
 
 ```
 MainComponent.heading
