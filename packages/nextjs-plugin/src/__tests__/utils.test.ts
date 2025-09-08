@@ -129,7 +129,7 @@ const UserCard = () => {
 
     it("should return null when no function found", () => {
       const code = `
-const data = { name: 'test' };
+const notAFunction = { name: 'test' };
 `;
 
       const name = getComponentNameFromFunction(code, 20);

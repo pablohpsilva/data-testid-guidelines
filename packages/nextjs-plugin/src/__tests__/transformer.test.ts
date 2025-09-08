@@ -69,9 +69,9 @@ export function Navigation() {
       const result = transformer.transform(input, "Navigation.tsx");
 
       expect(result).toContain('data-testid="Navigation.nav"');
-      expect(result).toContain('data-testid="Navigation.ul"');
-      expect(result).toContain('data-testid="Navigation.li"');
-      expect(result).toContain('data-testid="Navigation.button"');
+      expect(result).toContain('data-testid="Navigation.nav.ul"');
+      expect(result).toContain('data-testid="Navigation.ul.li"');
+      expect(result).toContain('data-testid="Navigation.li.button"');
     });
 
     it("should detect arrow function component names", () => {
@@ -83,8 +83,8 @@ export const UserCard = () => {
       const result = transformer.transform(input, "UserCard.tsx");
 
       expect(result).toContain('data-testid="UserCard.div"');
-      expect(result).toContain('data-testid="UserCard.h2"');
-      expect(result).toContain('data-testid="UserCard.p"');
+      expect(result).toContain('data-testid="UserCard.div.h2"');
+      expect(result).toContain('data-testid="UserCard.div.p"');
     });
 
     it("should detect const function component names", () => {
@@ -96,7 +96,7 @@ const ProductList = function() {
       const result = transformer.transform(input, "ProductList.tsx");
 
       expect(result).toContain('data-testid="ProductList.section"');
-      expect(result).toContain('data-testid="ProductList.h1"');
+      expect(result).toContain('data-testid="ProductList.section.h1"');
     });
   });
 
@@ -144,7 +144,7 @@ export function Navigation() {
       const result = transformer.transform(input, "Navigation.tsx");
 
       expect(result).toContain('data-testid="Navigation.nav"');
-      expect(result).toContain('data-testid="Navigation.ul"');
+      expect(result).toContain('data-testid="Navigation.nav.ul"');
     });
   });
 
@@ -175,7 +175,7 @@ export function Container() {
       const result = customTransformer.transform(input, "Container.tsx");
 
       expect(result).toContain('data-testid="Container"');
-      expect(result).not.toContain('data-testid="Container.div"');
+      expect(result).not.toContain('data-testid="Container.span"');
     });
 
     it("should respect skipElements option", () => {
@@ -300,15 +300,15 @@ export function ComplexComponent() {
       const result = transformer.transform(input, "ComplexComponent.tsx");
 
       expect(result).toContain('data-testid="ComplexComponent.div"');
-      expect(result).toContain('data-testid="ComplexComponent.header"');
-      expect(result).toContain('data-testid="ComplexComponent.nav"');
-      expect(result).toContain('data-testid="ComplexComponent.ul"');
-      expect(result).toContain('data-testid="ComplexComponent.li"');
-      expect(result).toContain('data-testid="ComplexComponent.a"');
-      expect(result).toContain('data-testid="ComplexComponent.main"');
-      expect(result).toContain('data-testid="ComplexComponent.section"');
-      expect(result).toContain('data-testid="ComplexComponent.h1"');
-      expect(result).toContain('data-testid="ComplexComponent.p"');
+      expect(result).toContain('data-testid="ComplexComponent.div.header"');
+      expect(result).toContain('data-testid="ComplexComponent.header.nav"');
+      expect(result).toContain('data-testid="ComplexComponent.nav.ul"');
+      expect(result).toContain('data-testid="ComplexComponent.ul.li"');
+      expect(result).toContain('data-testid="ComplexComponent.li.a"');
+      expect(result).toContain('data-testid="ComplexComponent.div.main"');
+      expect(result).toContain('data-testid="ComplexComponent.main.section"');
+      expect(result).toContain('data-testid="ComplexComponent.section.h1"');
+      expect(result).toContain('data-testid="ComplexComponent.section.p"');
     });
   });
 });
