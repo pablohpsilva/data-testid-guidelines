@@ -1,12 +1,12 @@
 # Guidelines for Defining data-testid's in React Applications
 
-* [EN](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README.md)
-* [ES](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-ES.md)
-* [FR](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-FR.md)
-* [JP](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-JP.md)
-* [LU](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-LG.md)
-* [PT-BR](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-PTBR.md)
-* [RU](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-RU.md)
+- [EN](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README.md)
+- [ES](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-ES.md)
+- [FR](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-FR.md)
+- [JP](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-JP.md)
+- [LU](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-LG.md)
+- [PT-BR](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-PTBR.md)
+- [RU](https://github.com/pablohpsilva/data-testid-guidelines/blob/main/README-RU.md)
 
 Creating predictable, unique, and reliable `data-testid` attributes is essential for ensuring robust and maintainable tests. This guide provides best practices, examples, and common patterns for defining `data-testid` attributes in your React (or basically any) applications.
 
@@ -85,9 +85,7 @@ const MainComponent: FC<
       </p>
       {nameList.map((name, index) => (
         <Fragment key={name}>
-          <span
-            data-testid={`${componentName}.nameList.item.${index}`}
-          >
+          <span data-testid={`${componentName}.nameList.item.${index}`}>
             {name}
           </span>
           <br />
@@ -106,7 +104,7 @@ const MainComponent: FC<
 // This component DOES NOT support being standalone
 const Heading: FC<PropsWithChildren<PropWithTestId>> = ({
   children,
-  testId
+  testId,
 }) => {
   return <h1 data-testid={`${testId}.Heading`}>{children}</h1>;
 };
@@ -114,7 +112,7 @@ const Heading: FC<PropsWithChildren<PropWithTestId>> = ({
 // This component supports being standalone
 const NameList: FC<{ items: string[] } & Partial<PropWithTestId>> = ({
   items,
-  testId
+  testId,
 }) => {
   const componentName = `${testId ? `${testId}.` : ""}${NameList?.name}`;
   return items.map((name, index) => (
@@ -127,9 +125,9 @@ const NameList: FC<{ items: string[] } & Partial<PropWithTestId>> = ({
 };
 
 // This component DOES NOT support being standalone
-const NameListItem: FC<PropsWithChildren<
-  { index: number } & PropWithTestId
->> = ({ children, index, testId }) => {
+const NameListItem: FC<
+  PropsWithChildren<{ index: number } & PropWithTestId>
+> = ({ children, index, testId }) => {
   const componentName = `${testId}.${NameListItem?.name}`;
   return <span data-testid={`${componentName}.${index}`}>{children}</span>;
 };
@@ -210,3 +208,307 @@ MainComponent.block.nameList.item.0
 MainComponent.block.nameList.item.1
 MainComponent.block.nameList.item.2
 ```
+
+## 🚀 Library Usage with withTestId HOC
+
+For a modern, simplified approach, you can use the `withTestId` Higher-Order Component (HOC) that automatically handles test ID generation:
+
+### Installation
+
+```bash
+npm install @pablohpsilva/data-testid-guidelines
+```
+
+### Basic Usage
+
+```typescript
+import {
+  withTestId,
+  PropsWithTestId,
+  testIdAttr,
+} from "@pablohpsilva/data-testid-guidelines";
+import { FC, HTMLAttributes } from "react";
+
+// Example 1: Simple Button Component
+const Button = withTestId(function Button({
+  testId,
+  ...props
+}: PropsWithTestId<HTMLAttributes<HTMLButtonElement>>) {
+  return (
+    <button data-testid={testId} {...props}>
+      Button
+    </button>
+  );
+});
+
+// Usage:
+<Button testId="my-button" onClick={() => alert("Clicked!")}>
+  Click me
+</Button>;
+// Results in: data-testid="my-button.Button"
+```
+
+### Example 2: Enhanced Button with Different Approach
+
+```typescript
+const EnhancedButton = withTestId(function EnhancedButton({
+  testId,
+  children,
+  ...props
+}: PropsWithTestId<HTMLAttributes<HTMLButtonElement>>) {
+  return (
+    <button data-testid={testId} {...props}>
+      {children}
+    </button>
+  );
+});
+
+// Usage:
+<EnhancedButton testId="enhanced-button" variant="secondary">
+  Enhanced Button
+</EnhancedButton>;
+// Results in: data-testid="enhanced-button.EnhancedButton"
+```
+
+### Example 3: Wrapper Component for Layout
+
+```typescript
+const Wrapper = withTestId(function Wrapper({
+  testId,
+  children,
+  ...props
+}: PropsWithTestId<HTMLAttributes<HTMLDivElement>>) {
+  return (
+    <div data-testid={testId} {...props}>
+      {children}
+    </div>
+  );
+});
+
+// Usage:
+<Wrapper className="example-section">
+  <h2>Section Title</h2>
+  <p>Section content</p>
+</Wrapper>;
+// Results in: data-testid="Wrapper"
+```
+
+### Example 4: Nested Component Hierarchy
+
+```typescript
+// When components are nested, test IDs build hierarchically:
+<Wrapper testId="parent">
+  <Wrapper className="example-section">
+    <Button testId="nested-button">Click me</Button>
+  </Wrapper>
+</Wrapper>
+
+// Results in:
+// - data-testid="parent.Wrapper" (parent wrapper)
+// - data-testid="parent.Wrapper.Wrapper" (nested wrapper)
+// - data-testid="nested-button.Button" (button)
+```
+
+### Key Benefits of the HOC Approach
+
+1. **Automatic ID Generation**: Component names are automatically included
+2. **Type Safety**: Full TypeScript support with `PropsWithTestId<T>`
+3. **Hierarchical Structure**: Test IDs build up naturally when components are nested
+4. **Simple API**: Just two main exports: `withTestId` and `testIdAttr`
+5. **Performance**: No hooks overhead, just simple string concatenation
+
+## 🔧 Build-Time Automation
+
+For even more automation, you can use our plugins to automatically inject `data-testid` attributes at build time without needing to wrap components or manually add test IDs:
+
+### Babel Plugin (Most Compatible)
+
+Perfect for Vite, Create React App, and custom Babel setups:
+
+**Installation:**
+
+```bash
+npm install --save-dev @pablohpsilva/babel-plugin-auto-testid
+```
+
+### Configuration
+
+```javascript
+// babel.config.js
+module.exports = {
+  plugins: [
+    [
+      "@pablohpsilva/babel-plugin-auto-testid",
+      {
+        // Only add in test environment
+        enabled: process.env.NODE_ENV === "test",
+      },
+    ],
+  ],
+};
+```
+
+### Before (your original code)
+
+```jsx
+function UserCard({ user }) {
+  return (
+    <div className="user-card">
+      <h2>{user.name}</h2>
+      <button onClick={handleEdit}>Edit</button>
+    </div>
+  );
+}
+```
+
+### After (automatically transformed)
+
+```jsx
+function UserCard({ user }) {
+  return (
+    <div className="user-card" data-testid="UserCard.div">
+      <h2 data-testid="UserCard.h2">{user.name}</h2>
+      <button onClick={handleEdit} data-testid="UserCard.button">
+        Edit
+      </button>
+    </div>
+  );
+}
+```
+
+### Benefits
+
+- ✅ **Zero Runtime Cost**: Applied at build time only
+- ✅ **No Code Changes**: Works with existing components
+- ✅ **Automatic Hierarchy**: Builds logical test ID paths
+- ✅ **Environment Specific**: Only active when needed (tests/development)
+- ✅ **Framework Agnostic**: Works with React, Next.js, Vite, etc.
+
+### SWC Plugin (Next.js 12+)
+
+Native Rust-based plugin for optimal performance with Next.js:
+
+**Installation:**
+
+1. Download `swc_plugin_auto_testid.wasm` from our [releases](./swc-plugin-auto-testid/)
+2. Place it in your project root
+3. Configure in `next.config.js` (see [Next.js Integration](#-nextjs-integration))
+
+**Benefits:**
+
+- ✅ **Native Performance**: Written in Rust, compiled to WebAssembly
+- ✅ **SWC Compatible**: Works with Next.js default compiler
+- ✅ **Zero Dependencies**: No additional npm packages needed
+- ✅ **Future-Proof**: Built for Next.js modern stack
+
+See the [`plugins/`](./plugins/) and [`swc-plugin-auto-testid/`](./swc-plugin-auto-testid/) directories for complete documentation and setup examples.
+
+## 🔧 Next.js Integration
+
+For Next.js applications (which use SWC by default instead of Babel), we provide multiple integration approaches:
+
+### Approach 1: SWC Plugin (Recommended - Next.js 12+)
+
+Our custom SWC plugin provides the best performance and native integration with Next.js:
+
+```javascript
+// next.config.js
+const path = require("path");
+
+module.exports = {
+  experimental: {
+    swcPlugins: [
+      [
+        path.resolve("./swc_plugin_auto_testid.wasm"),
+        {
+          separator: ".",
+          includeElement: true,
+          useHierarchy: true,
+          skipElements: ["br", "hr", "img", "svg"],
+          onlyInteractive: false,
+        },
+      ],
+    ],
+  },
+};
+```
+
+**Setup Instructions:**
+
+1. Download `swc_plugin_auto_testid.wasm` from our releases
+2. Place it in your Next.js project root
+3. Add the configuration above to `next.config.js`
+4. Restart your development server
+
+**Benefits:**
+
+- ✅ Native SWC integration (faster than Babel)
+- ✅ Works with Next.js default compiler
+- ✅ No additional dependencies
+- ✅ Automatic test ID generation at build time
+
+### Approach 2: Babel Configuration (Alternative)
+
+```javascript
+// .babelrc
+{
+  "presets": ["next/babel"],
+  "plugins": [
+    ["@pablohpsilva/babel-plugin-auto-testid", {
+      "separator": ".",
+      "includeElement": true,
+      "useHierarchy": true,
+      "skipElements": ["br", "hr", "img", "svg"]
+    }]
+  ]
+}
+```
+
+When `.babelrc` is present, Next.js automatically uses Babel instead of SWC.
+
+### Approach 2: Webpack Plugin
+
+```javascript
+// next.config.js
+const AutoTestIdWebpackPlugin = require("@pablohpsilva/webpack-plugin-auto-testid");
+
+module.exports = {
+  webpack: (config, { dev }) => {
+    if (dev || process.env.NODE_ENV === "test") {
+      config.plugins.push(new AutoTestIdWebpackPlugin());
+    }
+    return config;
+  },
+};
+```
+
+This approach keeps SWC for main compilation and only uses Babel for test ID transformation.
+
+### Approach 3: SWC Plugin (Future)
+
+```javascript
+// next.config.js
+module.exports = {
+  experimental: {
+    swcPlugins: [["@pablohpsilva/swc-plugin-auto-testid", {}]],
+  },
+};
+```
+
+_Note: SWC plugin is in development. Use Babel or Webpack approaches for now._
+
+### Running Examples
+
+```bash
+# React + Vite + Babel
+cd examples-babel-plugin
+npm install && npm run dev
+
+# Next.js Examples
+cd examples-nextjs
+npm install && npm run dev
+
+# View at http://localhost:3000
+```
+
+The examples provide working demonstrations with visual output and generated test IDs that you can inspect in browser dev tools.
