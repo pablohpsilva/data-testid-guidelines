@@ -3,6 +3,10 @@ interface NavigationProps {
   onTabChange: (tab: string) => void;
 }
 
+const Wrapper = ({ children }: { children: React.ReactNode }) => {
+  return <div>{children}</div>;
+};
+
 export function Navigation({ activeTab, onTabChange }: NavigationProps) {
   const tabs = [
     { id: "users", label: "Users", icon: "👥" },
@@ -18,9 +22,10 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
         <ul className="flex list-none gap-2 margin-0 padding-0">
           {tabs.map((tab) => (
             <li key={tab.id}>
-              <button
-                onClick={() => onTabChange(tab.id)}
-                className={`
+              <Wrapper>
+                <button
+                  onClick={() => onTabChange(tab.id)}
+                  className={`
                   flex items-center gap-2 px-4 py-2 rounded-md transition-colors
                   ${
                     activeTab === tab.id
@@ -28,10 +33,11 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }
                 `}
-              >
-                <span>{tab.icon}</span>
-                <span>{tab.label}</span>
-              </button>
+                >
+                  <span>{tab.icon}</span>
+                  <span>{tab.label}</span>
+                </button>
+              </Wrapper>
             </li>
           ))}
         </ul>

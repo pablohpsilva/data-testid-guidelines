@@ -1,0 +1,2 @@
+overrides:
+  '@pablohpsilva/nextjs-auto-testid': link:../packages/nextjs-plugin

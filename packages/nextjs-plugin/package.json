@@ -1,0 +1,40 @@
+{
+  "name": "@pablohpsilva/nextjs-auto-testid",
+  "version": "1.0.0",
+  "description": "Next.js plugin for automatic data-testid injection without Babel",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "test:watch": "vitest --watch"
+  },
+  "keywords": [
+    "nextjs",
+    "testing",
+    "data-testid",
+    "e2e",
+    "typescript",
+    "plugin"
+  ],
+  "author": "Pablo Henrique Silva",
+  "license": "MIT",
+  "dependencies": {
+    "@swc/core": "^1.3.0",
+    "@swc/types": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/webpack": "^5.28.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0",
+    "webpack": "^5.90.0"
+  },
+  "peerDependencies": {
+    "next": ">=13.0.0"
+  }
+}
