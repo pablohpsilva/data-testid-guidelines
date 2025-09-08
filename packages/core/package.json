@@ -1,0 +1,59 @@
+{
+  "name": "@pablohpsilva/data-testid-guidelines",
+  "version": "1.0.0",
+  "description": "Core library for data-testid guidelines - provides withTestId HOC and utilities",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c rollup.config.js",
+    "dev": "rollup -c rollup.config.js -w",
+    "test": "vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "testing",
+    "data-testid",
+    "react",
+    "hoc",
+    "test-automation"
+  ],
+  "author": "Pablo Henrique Silva <pablohpsilva@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pablohpsilva/data-testid-guidelines.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/pablohpsilva/data-testid-guidelines/issues"
+  },
+  "homepage": "https://github.com/pablohpsilva/data-testid-guidelines#readme",
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "@babel/preset-react": "^7.22.0",
+    "@babel/preset-typescript": "^7.23.0",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/react": "^18.2.0",
+    "rollup": "^4.0.0",
+    "tslib": "^2.6.2",
+    "typescript": "^5.2.0",
+    "vitest": "^0.34.0"
+  }
+}

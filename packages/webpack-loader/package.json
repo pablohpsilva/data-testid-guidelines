@@ -1,0 +1,66 @@
+{
+  "name": "@pablohpsilva/webpack-auto-testid-loader",
+  "version": "1.0.0",
+  "description": "Webpack loader to automatically inject data-testid attributes at build time",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "webpack-loader",
+    "testing",
+    "data-testid",
+    "react",
+    "nextjs",
+    "automation",
+    "build-time"
+  ],
+  "author": "Pablo Henrique Silva <pablohpsilva@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pablohpsilva/data-testid-guidelines.git",
+    "directory": "packages/webpack-loader"
+  },
+  "bugs": {
+    "url": "https://github.com/pablohpsilva/data-testid-guidelines/issues"
+  },
+  "homepage": "https://github.com/pablohpsilva/data-testid-guidelines#readme",
+  "peerDependencies": {
+    "@babel/core": "^7.0.0",
+    "webpack": ">=4.0.0"
+  },
+  "dependencies": {
+    "@babel/types": "^7.23.0",
+    "loader-utils": "^3.2.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "@babel/preset-react": "^7.22.0",
+    "@babel/preset-typescript": "^7.23.0",
+    "@types/babel__core": "^7.20.0",
+    "@types/babel__types": "^7.20.0",
+    "@types/loader-utils": "^2.0.0",
+    "@types/node": "^20.0.0",
+    "@types/webpack": "^5.28.0",
+    "jest": "^29.7.0",
+    "typescript": "^5.2.0",
+    "webpack": "^5.88.0"
+  }
+}

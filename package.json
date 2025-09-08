@@ -1,60 +1,37 @@
 {
-  "name": "data-testid-guidelines",
+  "name": "@pablohpsilva/data-testid-guidelines-monorepo",
   "version": "1.0.0",
-  "description": "A TypeScript library for managing data-testid attributes in React applications following best practices",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
+  "description": "Monorepo for data-testid guidelines packages - automatic test ID injection tools",
+  "private": true,
+  "workspaces": [
+    "packages/*"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "test": "vitest",
-    "test:watch": "vitest --watch",
-    "test:coverage": "vitest --coverage",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint src --ext .ts,.tsx",
-    "prepublishOnly": "npm run build",
-    "examples:install": "cd examples && npm install",
-    "examples:dev": "cd examples && npm run dev",
-    "examples:build": "cd examples && npm run build"
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "clean": "rm -rf packages/*/dist packages/*/node_modules",
+    "install:all": "npm install && npm install --workspaces",
+    "publish:all": "npm run build && npm publish --workspaces --access public"
   },
   "keywords": [
-    "react",
     "testing",
     "data-testid",
-    "test-automation",
-    "typescript"
+    "react",
+    "automation",
+    "monorepo"
   ],
-  "author": "Pablo Silva",
+  "author": "Pablo Henrique Silva <pablohpsilva@gmail.com>",
   "license": "MIT",
-  "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pablohpsilva/data-testid-guidelines.git"
   },
+  "bugs": {
+    "url": "https://github.com/pablohpsilva/data-testid-guidelines/issues"
+  },
+  "homepage": "https://github.com/pablohpsilva/data-testid-guidelines#readme",
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "^11.1.5",
-    "@testing-library/jest-dom": "^6.1.4",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^14.5.1",
-    "@types/react": "^18.2.37",
-    "@types/react-dom": "^18.2.15",
-    "@typescript-eslint/eslint-plugin": "^6.10.0",
-    "@typescript-eslint/parser": "^6.10.0",
-    "@vitest/coverage-v8": "^0.34.6",
-    "eslint": "^8.53.0",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "jsdom": "^22.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "rollup": "^4.3.0",
-    "rollup-plugin-dts": "^6.1.0",
-    "tslib": "^2.8.1",
-    "typescript": "^5.2.2",
-    "vitest": "^0.34.6"
+    "@types/node": "^20.0.0",
+    "typescript": "^5.2.0"
   }
 }
