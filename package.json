@@ -7,11 +7,13 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspaces",
-    "test": "npm run test --workspaces",
+    "build": "node scripts/build-all.js",
+    "test": "npm run test --workspaces --if-present",
     "clean": "rm -rf packages/*/dist packages/*/node_modules",
     "install:all": "npm install && npm install --workspaces",
-    "publish:all": "npm run build && npm publish --workspaces --access public"
+    "publish:all": "npm run build && npm publish --workspaces --access public",
+    "dev": "npm run dev --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present"
   },
   "keywords": [
     "testing",
