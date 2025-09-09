@@ -355,7 +355,7 @@ export class SimpleJSXParser {
     fullCode: string,
     lineStartPosition: number
   ): string {
-    // Look for JSX opening tags, especially those that might span multiple lines
+    // Look for JSX opening tags - be more careful about attribute boundaries
     const simpleJSXRegex = /(<([a-z][a-zA-Z0-9-]*)\s*)([^>]*?)(\/?>|>)/g;
 
     let result = line;
@@ -369,12 +369,13 @@ export class SimpleJSXParser {
       const closingPart = match[4]; // ">" or "/>"
       const fullMatch = match[0];
 
+      // Skip TypeScript generics (like useState<string>)
+      if (this.isTypeScriptGeneric(line, match.index)) {
+        continue;
+      }
+
       // Skip if line contains JavaScript expressions that might be problematic
-      // But be more permissive to allow buttons and other interactive elements
-      if (
-        this.lineContainsProblematicJS(line, match.index) &&
-        elementName !== "button"
-      ) {
+      if (this.lineContainsProblematicJS(line, match.index)) {
         continue;
       }
 
@@ -438,30 +439,58 @@ export class SimpleJSXParser {
     return result;
   }
 
-  private lineContainsProblematicJS(line: string, position: number): boolean {
-    // Check if this line contains arrow functions or other JS that might break
+  private isTypeScriptGeneric(line: string, position: number): boolean {
+    // Check if this is a TypeScript generic like useState<string> or Record<string, any>
     const beforeMatch = line.substring(0, position);
     const afterMatch = line.substring(position);
 
-    // Only skip if the JSX element itself has problematic attributes
-    const elementMatch = line.match(/<[a-z][a-zA-Z0-9-]*\s*([^>]*)/);
-    if (elementMatch) {
-      const elementAttributes = elementMatch[1];
+    // Look for patterns that indicate TypeScript generics
+    const genericPatterns = [
+      /useState\s*$/,
+      /useRef\s*$/,
+      /useCallback\s*$/,
+      /useMemo\s*$/,
+      /Record\s*$/,
+      /Array\s*$/,
+      /Promise\s*$/,
+      /Map\s*$/,
+      /Set\s*$/,
+      /\w+\s*$/, // Any identifier followed by <
+    ];
 
-      // Be more permissive - only skip truly problematic cases
-      // Allow most elements, even with complex attributes
-      if (
-        elementAttributes.includes("onClick={() =>") &&
-        elementAttributes.includes("className={`")
-      ) {
-        // Only skip if element has BOTH complex onClick AND complex className
-        return true;
-      }
+    // Also check if the content after < looks like a TypeScript type
+    const typePattern = /^<[A-Z][a-zA-Z0-9\[\]|&,\s]*>/;
+    const isTypeScript = typePattern.test(afterMatch);
+
+    return (
+      genericPatterns.some((pattern) => pattern.test(beforeMatch)) &&
+      isTypeScript
+    );
+  }
+
+  private lineContainsProblematicJS(line: string, position: number): boolean {
+    // Extract just the JSX element we're trying to process
+    const elementMatch = line
+      .substring(position)
+      .match(/^<[a-z][a-zA-Z0-9-]*\s*([^>]*?)>/);
+    if (!elementMatch) {
+      return false;
     }
 
-    // Allow simple elements even if the line contains => elsewhere (like in map functions)
+    const elementAttributes = elementMatch[1];
 
-    return false;
+    // Only skip elements that have very complex multi-line attributes or expressions
+    // that would definitely break if we insert data-testid
+    const problematicPatterns = [
+      /\{\s*\([^}]*\)\s*=>\s*[^}]*\{[^}]*\}/, // Complex arrow functions with blocks
+      /className\s*=\s*\{`[^`]*\$\{[^}]*\}[^`]*`\}/, // Template literals in className
+      /\{\s*[^}]*\?\s*[^}]*:\s*[^}]*\}/, // Ternary operators
+    ];
+
+    // If any problematic pattern is found in the element's attributes, skip it
+    return problematicPatterns.some((pattern) =>
+      pattern.test(elementAttributes)
+    );
   }
 
   private analyzeLineForLoop(line: string): {

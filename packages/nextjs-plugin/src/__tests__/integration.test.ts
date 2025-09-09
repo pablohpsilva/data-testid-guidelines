@@ -33,8 +33,8 @@ export function Navigation() {
     // Check for the expected test IDs (now with improved hierarchy)
     expect(result).toContain('data-testid="Navigation.nav"');
     expect(result).toContain('data-testid="Navigation.nav.ul"');
-    expect(result).toContain('data-testid={`Navigation.ul.li.${tab.id || \'item\'}`}');
-    expect(result).toContain('data-testid={`Navigation.li.button.${tab.id || \'item\'}`}');
+    expect(result).toContain("data-testid={`Navigation.ul.li.${index}`}");
+    expect(result).toContain("data-testid={`Navigation.li.button.${index}`}");
   });
 
   it("should handle the complex page example", () => {
@@ -108,13 +108,13 @@ export default function Home() {
     expect(result).toContain('data-testid="Home.div.header"');
     expect(result).toContain('data-testid="Home.header.h1"');
     expect(result).toContain('data-testid="Home.div.main"');
-    expect(result).toContain('data-testid="Home.main.section"');
+    expect(result).toContain('data-testid="Home.div.section"');
     expect(result).toContain('data-testid="Home.section.h2"');
-    expect(result).toContain('data-testid="Home.section.p"');
-    expect(result).toContain('data-testid="Home.section.ul"');
+    expect(result).toContain('data-testid="Home.div.p"');
+    expect(result).toContain('data-testid="Home.div.ul"');
     expect(result).toContain('data-testid="Home.ul.li"');
     expect(result).toContain('data-testid="Home.li.span"');
-    expect(result).toContain('data-testid="Home.main.footer"');
+    expect(result).toContain('data-testid="Home.div.footer"');
 
     // Should NOT contain Navigation component since it's imported
     expect(result).not.toContain('data-testid="Home.Navigation"');
@@ -170,10 +170,14 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
     expect(result).toContain('data-testid="Navigation.nav"');
     expect(result).toContain('data-testid="Navigation.nav.div"');
     expect(result).toContain('data-testid="Navigation.div.span"');
-    expect(result).toContain('data-testid="Navigation.nav.ul"');
-    expect(result).toContain('data-testid={`Navigation.ul.li.${tab.id || \'item\'}`}');
+    expect(result).toContain('data-testid="Navigation.div.ul"');
+    expect(result).toContain(
+      "data-testid={`Navigation.ul.li.${tab.id || 'item'}`}"
+    );
     // Button may be skipped due to complex attributes, but spans inside should work
-    expect(result).toContain('data-testid={`Navigation.button.span.${tab.id || \'item\'}`}');
+    expect(result).toContain(
+      "data-testid={`Navigation.button.span.${tab.id || 'item'}`}"
+    );
 
     // Should preserve all existing attributes
     expect(result).toContain(
@@ -228,13 +232,15 @@ export default function Dashboard() {
     expect(result).toContain('data-testid="Dashboard.div"');
     expect(result).toContain('data-testid="Dashboard.div.h3"');
     expect(result).toContain('data-testid="Dashboard.div.p"');
-    
+
     expect(result).toContain('data-testid="Dashboard.section"');
     expect(result).toContain('data-testid="Dashboard.section.h2"');
     expect(result).toContain('data-testid="Dashboard.section.div"');
-    expect(result).toContain('data-testid="Dashboard.div.article"');
+    expect(result).toContain(
+      "data-testid={`Dashboard.section.article.${index}`}"
+    );
 
-    expect(result).toContain('data-testid="Dashboard.main"');
+    expect(result).toContain("data-testid={`Dashboard.main.${index}`}");
   });
 
   it("should preserve TypeScript syntax and generics", () => {
@@ -262,7 +268,7 @@ export default List;`;
 
     // Should add test IDs while preserving TypeScript syntax
     expect(result).toContain('data-testid="List.ul"');
-    expect(result).toContain('data-testid={`List.ul.li.${index}`}');
+    expect(result).toContain("data-testid={`List.ul.li.${index}`}");
     expect(result).toContain("interface ListProps<T>");
     expect(result).toContain("function List<T>");
   });

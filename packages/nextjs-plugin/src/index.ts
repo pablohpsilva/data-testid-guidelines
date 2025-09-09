@@ -33,7 +33,7 @@ export function withAutoTestId(
           exclude: /node_modules/,
           use: [
             {
-              loader: require.resolve("./loader"),
+              loader: require.resolve("../dist/loader"),
               options: options,
             },
           ],

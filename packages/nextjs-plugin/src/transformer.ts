@@ -1,11 +1,11 @@
 import { PluginOptions } from "./types";
-import { SimpleJSXParser } from "./parser";
+import { SimpleReliableParser } from "./simple-parser";
 
 export class TestIdTransformer {
-  private parser: SimpleJSXParser;
+  private parser: SimpleReliableParser;
 
   constructor(options: PluginOptions = {}) {
-    this.parser = new SimpleJSXParser(options);
+    this.parser = new SimpleReliableParser(options);
   }
 
   transform(code: string, filename: string): string {
