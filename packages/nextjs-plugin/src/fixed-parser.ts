@@ -1,7 +1,7 @@
 import { PluginOptions, TestIdContext } from "./types";
 import { mergeOptions, shouldSkipElement, generateTestId } from "./utils";
 
-export class SimpleReliableParser {
+export class FixedParser {
   private options: Required<PluginOptions>;
 
   constructor(options: PluginOptions = {}) {
@@ -45,7 +45,6 @@ export class SimpleReliableParser {
       context.componentName = componentName;
     }
 
-    // Use a much simpler approach - find JSX elements and add test IDs
     return this.addTestIdsToJSX(code, context);
   }
 
@@ -69,51 +68,34 @@ export class SimpleReliableParser {
   }
 
   private addTestIdsToJSX(code: string, context: TestIdContext): string {
-    // Process line by line to track hierarchy properly
+    // Use a simpler approach that tracks very basic parent-child relationships
     const lines = code.split("\n");
-    const elementStack: string[] = []; // Track parent elements for hierarchy
     let inLoop = false;
-    let loopDepth = 0;
+    let parentElement: string | null = null;
 
-    const processedLines = lines.map((line, lineIndex) => {
-      // Track loop context
-      if (this.lineStartsLoop(line)) {
+    const processedLines = lines.map((line) => {
+      // Track loop context - simple detection
+      if (/\.map\s*\(/.test(line)) {
         inLoop = true;
-        loopDepth++;
+      }
+      if (inLoop && /^\s*\)\s*[;,)\]\}]/.test(line)) {
+        inLoop = false;
       }
 
-      if (this.lineEndsLoop(line)) {
-        loopDepth--;
-        if (loopDepth <= 0) {
-          inLoop = false;
-          loopDepth = 0;
-        }
-      }
-
-      // Process JSX elements in this line
-      return this.processLineForJSX(line, elementStack, context, inLoop);
+      return this.processLineForJSX(line, context, inLoop, parentElement);
     });
 
     return processedLines.join("\n");
   }
 
-  private lineStartsLoop(line: string): boolean {
-    return /\.(map|forEach|filter|reduce)\s*\(/.test(line);
-  }
-
-  private lineEndsLoop(line: string): boolean {
-    // Simple heuristic: lines that end loops usually have closing patterns
-    return /^\s*\)\s*[;,)\]\}]/.test(line) || /^\s*\}\)\s*[;,)\]\}]/.test(line);
-  }
-
   private processLineForJSX(
     line: string,
-    elementStack: string[],
     context: TestIdContext,
-    inLoop: boolean
+    inLoop: boolean,
+    parentElement: string | null
   ): string {
-    // Find JSX opening tags in this line
-    const jsxRegex = /<([a-z][a-zA-Z0-9-]*)\s*([^>]*?)(\s*\/?>)/g;
+    // More careful JSX regex that ensures proper element boundaries
+    const jsxRegex = /<([a-z][a-zA-Z0-9-]*)(\s[^>]*?)?(\s*\/?>)/g;
 
     let result = line;
     let offset = 0;
@@ -146,24 +128,27 @@ export class SimpleReliableParser {
         continue;
       }
 
-      // Update element stack for hierarchy tracking
-      this.updateElementStack(line, elementStack, elementName);
-
-      // Generate hierarchical test ID
-      const testId = this.generateHierarchicalTestId(
+      // Generate test ID with very simple hierarchy (max 2 levels)
+      const testId = this.generateTestId(
         elementName,
-        elementStack,
         context,
-        inLoop
+        inLoop,
+        parentElement
       );
       if (!testId) {
         continue;
       }
 
-      // Create replacement
-      const newAttributes = attributes.trim()
-        ? `${attributes} ${testId}`
-        : ` ${testId}`;
+      // Create replacement - be very careful about syntax
+      let newAttributes;
+      if (attributes.trim()) {
+        // If there are existing attributes, ensure proper spacing
+        const cleanAttributes = attributes.trim();
+        newAttributes = ` ${cleanAttributes} ${testId}`;
+      } else {
+        // No existing attributes, just add the test ID
+        newAttributes = ` ${testId}`;
+      }
 
       const replacement = `<${elementName}${newAttributes}${closing}`;
 
@@ -179,31 +164,36 @@ export class SimpleReliableParser {
     return result;
   }
 
-  private updateElementStack(
-    line: string,
-    elementStack: string[],
-    currentElement: string
-  ): void {
-    // Simple heuristic: if line has closing tags, pop from stack
-    const closingTags = (line.match(/<\/[a-z][a-zA-Z0-9-]*>/g) || []).length;
-    for (let i = 0; i < closingTags && elementStack.length > 0; i++) {
-      elementStack.pop();
-    }
+  private isTypeScriptGeneric(line: string, position: number): boolean {
+    // Check if this is a TypeScript generic like useState<string>
+    const beforeMatch = line.substring(Math.max(0, position - 20), position);
+    const afterMatch = line.substring(position, position + 50);
 
-    // Add current element to stack (will be parent for nested elements)
-    elementStack.push(currentElement);
+    // Look for common TypeScript generic patterns
+    const isGeneric =
+      /\w+\s*$/.test(beforeMatch) &&
+      /^<[A-Z][a-zA-Z0-9\[\]|&,\s]*>/.test(afterMatch);
+
+    return isGeneric;
   }
 
-  private generateHierarchicalTestId(
-    elementName: string,
-    elementStack: string[],
-    context: TestIdContext,
-    inLoop: boolean
-  ): string | null {
-    if (!this.options.useHierarchy) {
-      return this.generateSimpleTestId(elementName, context);
-    }
+  private hasComplexAttributes(attributes: string): boolean {
+    // Only skip if attributes have very complex patterns that would definitely break
+    const complexPatterns = [
+      /\{[^}]*=>[^}]*\{[^}]*\}[^}]*\}/, // Complex arrow functions with nested blocks
+      /\{[^}]*\?[^}]*:[^}]*\}/, // Ternary operators
+      /className\s*=\s*\{`[^`]*\$\{[^}]*\}[^`]*`\}/, // Template literals in className
+    ];
 
+    return complexPatterns.some((pattern) => pattern.test(attributes));
+  }
+
+  private generateTestId(
+    elementName: string,
+    context: TestIdContext,
+    inLoop: boolean,
+    parentElement: string | null
+  ): string | null {
     const parts: string[] = [];
 
     // Add component name
@@ -211,10 +201,9 @@ export class SimpleReliableParser {
       parts.push(context.componentName);
     }
 
-    // Add parent elements from stack (excluding current element)
-    const parentElements = elementStack.slice(0, -1);
-    if (parentElements.length > 0) {
-      parts.push(...parentElements);
+    // Add simple parent element if useHierarchy is enabled and we have one
+    if (this.options.useHierarchy && parentElement) {
+      parts.push(parentElement);
     }
 
     // Add current element
@@ -230,38 +219,5 @@ export class SimpleReliableParser {
     }
 
     return `data-testid="${baseTestId}"`;
-  }
-
-  private isTypeScriptGeneric(code: string, position: number): boolean {
-    // Check if this is a TypeScript generic like useState<string>
-    const beforeMatch = code.substring(Math.max(0, position - 20), position);
-    const afterMatch = code.substring(position, position + 50);
-
-    // Look for common TypeScript generic patterns
-    const isGeneric =
-      /\w+\s*$/.test(beforeMatch) &&
-      /^<[A-Z][a-zA-Z0-9\[\]|&,\s]*>/.test(afterMatch);
-
-    return isGeneric;
-  }
-
-  private hasComplexAttributes(attributes: string): boolean {
-    // Only skip if attributes have very complex patterns that would definitely break
-    const complexPatterns = [
-      /\{[^}]*=>[^}]*\{[^}]*\}[^}]*\}/, // Complex arrow functions with blocks
-      /\{[^}]*\?[^}]*:[^}]*\}/, // Ternary operators
-      /className\s*=\s*\{`[^`]*\$\{[^}]*\}[^`]*`\}/, // Template literals
-    ];
-
-    return complexPatterns.some((pattern) => pattern.test(attributes));
-  }
-
-  private generateSimpleTestId(
-    elementName: string,
-    context: TestIdContext
-  ): string | null {
-    // For now, just use simple component.element format
-    // We can enhance this later with hierarchy if needed
-    return generateTestId(elementName, context, this.options);
   }
 }

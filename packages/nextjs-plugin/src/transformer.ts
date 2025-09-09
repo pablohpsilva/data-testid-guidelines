@@ -1,11 +1,11 @@
 import { PluginOptions } from "./types";
-import { SimpleReliableParser } from "./simple-parser";
+import { FixedParser } from "./fixed-parser";
 
 export class TestIdTransformer {
-  private parser: SimpleReliableParser;
+  private parser: FixedParser;
 
   constructor(options: PluginOptions = {}) {
-    this.parser = new SimpleReliableParser(options);
+    this.parser = new FixedParser(options);
   }
 
   transform(code: string, filename: string): string {
