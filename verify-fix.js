@@ -1,3 +1,16 @@
+const { TestIdTransformer } = require("./dist/transformer.js");
+
+const transformer = new TestIdTransformer({
+  enabled: true,
+  separator: ".",
+  includeElement: true,
+  useHierarchy: true,
+  skipElements: [],
+  onlyInteractive: false,
+});
+
+// This is the exact Navigation component that was causing the error
+const input = `
 interface NavigationProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
@@ -25,14 +38,14 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
               <Wrapper>
                 <button
                   onClick={() => onTabChange(tab.id)}
-                  className={`
+                  className={\`
                   flex items-center gap-2 px-4 py-2 rounded-md transition-colors
-                  ${
+                  \${
                     activeTab === tab.id
                       ? "bg-blue-500 text-white"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }
-                `}
+                \`}
                 >
                   <span>{tab.icon}</span>
                   <span>{tab.label}</span>
@@ -40,14 +53,21 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
               </Wrapper>
             </li>
           ))}
-          <li>
-            <button>{tabs?.[0]?.icon}</button>
-          </li>
-          <li>
-            <button>{tabs?.[0]?.icon}</button>
-          </li>
         </ul>
       </div>
     </nav>
   );
+}`;
+
+const result = transformer.transform(input, "Navigation.tsx");
+console.log("=== FIXED NAVIGATION COMPONENT ===");
+console.log(result);
+
+// Check if the problematic ${index} is gone
+if (result.includes("${index}")) {
+  console.log("\n❌ ERROR: Still has undefined ${index}");
+} else if (result.includes("${tab.id || 'item'}")) {
+  console.log("\n✅ SUCCESS: Now uses ${tab.id || 'item'} - no more ReferenceError!");
+} else {
+  console.log("\n⚠️  UNKNOWN: Different pattern generated");
 }

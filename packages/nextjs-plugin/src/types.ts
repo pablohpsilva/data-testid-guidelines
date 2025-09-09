@@ -12,6 +12,9 @@ export interface TestIdContext {
   hierarchy: string[];
   loopIndices: Map<string, number>;
   elementCounts: Map<string, number>;
+  code?: string;
+  position?: number;
+  currentLoopVariable?: string | null;
 }
 
 export const DEFAULT_OPTIONS: Required<PluginOptions> = {

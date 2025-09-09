@@ -1,5 +1,10 @@
 import { PluginOptions, TestIdContext } from "./types";
-import { mergeOptions, shouldSkipElement, generateTestId } from "./utils";
+import {
+  mergeOptions,
+  shouldSkipElement,
+  generateTestId,
+  detectLoopContext,
+} from "./utils";
 
 export class FixedParser {
   private options: Required<PluginOptions>;
@@ -37,6 +42,7 @@ export class FixedParser {
       hierarchy: [],
       loopIndices: new Map(),
       elementCounts: new Map(),
+      code: code,
     };
 
     // Find component function to extract name
@@ -72,17 +78,47 @@ export class FixedParser {
     const lines = code.split("\n");
     let inLoop = false;
     let parentElement: string | null = null;
+    let currentPosition = 0;
+    let currentLoopVariable: string | null = null; // Track the current loop variable
 
-    const processedLines = lines.map((line) => {
+    const processedLines = lines.map((line, lineIndex) => {
       // Track loop context - simple detection
-      if (/\.map\s*\(/.test(line)) {
+      const mapMatch = line.match(
+        /\.map\s*\(\s*\(\s*(\w+)(?:\s*,\s*(\w+))?\s*\)\s*=>/
+      );
+      if (mapMatch) {
         inLoop = true;
+        // Store the detected loop variable for this loop context
+        if (mapMatch[2]) {
+          // Has index parameter: .map((item, index) =>
+          currentLoopVariable = mapMatch[2];
+        } else {
+          // No index parameter: .map((item) =>
+          currentLoopVariable = `${mapMatch[1]}.id || 'item'`;
+        }
       }
       if (inLoop && /^\s*\)\s*[;,)\]\}]/.test(line)) {
         inLoop = false;
+        currentLoopVariable = null;
       }
 
-      return this.processLineForJSX(line, context, inLoop, parentElement);
+      // Calculate current position in the code
+      context.position = currentPosition;
+
+      // Store current loop variable in context for use by generateTestId
+      context.currentLoopVariable = currentLoopVariable;
+
+      const processedLine = this.processLineForJSX(
+        line,
+        context,
+        inLoop,
+        parentElement
+      );
+
+      // Update position for next iteration
+      currentPosition += line.length + 1; // +1 for newline
+
+      return processedLine;
     });
 
     return processedLines.join("\n");
@@ -215,9 +251,44 @@ export class FixedParser {
 
     // Handle loop context
     if (inLoop) {
-      return `data-testid={\`${baseTestId}.\${index}\`}`;
+      // Use the stored loop variable from the context
+      const loopVariable = context.currentLoopVariable || "index";
+      return `data-testid={\`${baseTestId}.\${${loopVariable}}\`}`;
     }
 
     return `data-testid="${baseTestId}"`;
+  }
+
+  private extractLoopVariable(context: TestIdContext): string {
+    // Look for the loop pattern in the code around the current position
+    if (!context.code || context.position === undefined) {
+      return "index";
+    }
+
+    const beforePosition = context.code.substring(
+      Math.max(0, context.position - 200),
+      context.position
+    );
+
+    // Check for .map with index parameter: .map((item, index) =>
+    const mapWithIndexMatch = beforePosition.match(
+      /\.map\s*\(\s*\(\s*\w+\s*,\s*(\w+)\s*\)\s*=>/
+    );
+    if (mapWithIndexMatch) {
+      return mapWithIndexMatch[1]; // Return the index variable name
+    }
+
+    // Check for .map without index: .map((item) =>
+    const mapWithoutIndexMatch = beforePosition.match(
+      /\.map\s*\(\s*\(\s*(\w+)\s*\)\s*=>/
+    );
+    if (mapWithoutIndexMatch) {
+      const itemVar = mapWithoutIndexMatch[1];
+      // Try to use item.id if available, otherwise fallback to 'index'
+      return `${itemVar}.id || 'item'`;
+    }
+
+    // Default fallback
+    return "index";
   }
 }
