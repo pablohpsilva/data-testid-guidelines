@@ -1,0 +1,47 @@
+{
+  "name": "data-testid-guidelines-babel-plugin",
+  "version": "1.0.0",
+  "description": "A Babel plugin for enforcing data-testid guidelines",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "babel",
+    "plugin",
+    "testing",
+    "data-testid",
+    "nextjs"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/types": "^7.23.0",
+    "@babel/traverse": "^7.23.0",
+    "@types/babel__core": "^7.20.5",
+    "@types/babel__helper-plugin-utils": "^7.10.3",
+    "@types/node": "^20.8.0",
+    "typescript": "^5.2.0",
+    "vitest": "^0.34.0",
+    "@vitest/coverage-v8": "^0.34.0"
+  },
+  "dependencies": {
+    "@babel/helper-plugin-utils": "^7.22.0"
+  },
+  "peerDependencies": {
+    "@babel/core": "^7.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=16"
+  }
+}
